@@ -3,26 +3,41 @@ const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 const signalEngine = require('./engine/signalEngine');
 const tickDataProcessor = require('./engine/tickDataProcessor');
 
 const app = express();
 const server = http.createServer(app);
+
+const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: clientUrl,
     methods: ["GET", "POST"]
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: clientUrl,
+  credentials: true
+}));
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use('/api/signals', require('./routes/signals'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/courses', require('./routes/courses'));
+
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build/index.html'));
+  });
+}
 
 // WebSocket Connection
 io.on('connection', (socket) => {
@@ -34,7 +49,7 @@ io.on('connection', (socket) => {
 });
 
 // Real-time signal emission
-ticksPerSignalDataProcessor.on('newTick', (tickData) => {
+ticksDataProcessor.on('newTick', (tickData) => {
   const signal = signalEngine.generateSignal(tickData);
   
   io.emit('signal', {
@@ -53,3 +68,5 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   tickDataProcessor.start();
 });
+
+module.exports = app;
