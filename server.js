@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
 });
 
 // Real-time signal emission
-tickDataProcessor.on('newTick', (tickData) => {
+ticksPerSignalDataProcessor.on('newTick', (tickData) => {
   const signal = signalEngine.generateSignal(tickData);
   
   io.emit('signal', {

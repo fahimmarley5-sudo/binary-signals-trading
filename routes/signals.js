@@ -2,20 +2,17 @@ const express = require('express');
 const router = express.Router();
 const signalEngine = require('../engine/signalEngine');
 
-// Get latest signal
 router.get('/latest', (req, res) => {
   const history = signalEngine.getSignalHistory(1);
   res.json(history[0] || {});
 });
 
-// Get signal history
 router.get('/history', (req, res) => {
   const limit = req.query.limit || 20;
   const history = signalEngine.getSignalHistory(limit);
   res.json(history);
 });
 
-// Record win/loss for a signal
 router.post('/result', (req, res) => {
   const { signalType, won } = req.body;
   

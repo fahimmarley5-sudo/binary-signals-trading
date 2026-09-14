@@ -8,16 +8,15 @@ class SignalEngine {
       evenOdd: { wins: 0, total: 0 },
       matchDiffer: { wins: 0, total: 0 }
     };
-    this.ticksPerSignal = 10; // Generate signal every 10 ticks
-    this.secondsPerSignal = 60; // Each signal lasts 60 seconds
+    this.ticksPerSignal = 10;
+    this.secondsPerSignal = 60;
   }
 
   generateSignal(tickData) {
     this.tickCount++;
     
-    // Generate new signal every N ticks
     if (this.tickCount % this.ticksPerSignal === 0) {
-      this.lastNumber = Math.floor(Math.random() * 10000); // 4-digit number
+      this.lastNumber = Math.floor(Math.random() * 10000);
     }
 
     const signal = {
@@ -31,41 +30,29 @@ class SignalEngine {
     };
 
     this.signalHistory.push(signal);
-    
     return signal;
   }
 
   generateOverUnder() {
-    // Over/Under analysis based on current trend
     const lastPrice = this.signalHistory.length > 0 
       ? this.signalHistory[this.signalHistory.length - 1].number 
       : 5000;
     
     const prediction = Math.random() > 0.5 ? 'OVER' : 'UNDER';
-    const confidence = (Math.random() * 30 + 70).toFixed(2); // 70-100%
+    const confidence = (Math.random() * 30 + 70).toFixed(2);
     
-    return {
-      prediction,
-      confidence,
-      threshold: lastPrice
-    };
+    return { prediction, confidence, threshold: lastPrice };
   }
 
   generateEvenOdd() {
-    // Even/Odd signal based on last digit analysis
     const lastDigit = this.lastNumber % 10;
     const prediction = lastDigit % 2 === 0 ? 'EVEN' : 'ODD';
     const confidence = (Math.random() * 30 + 70).toFixed(2);
     
-    return {
-      prediction,
-      confidence,
-      lastDigit
-    };
+    return { prediction, confidence, lastDigit };
   }
 
   generateMatchDiffer() {
-    // Match/Differ - compares current vs previous number pattern
     const currentPattern = this.getNumberPattern(this.lastNumber);
     const prevPattern = this.signalHistory.length > 1
       ? this.getNumberPattern(this.signalHistory[this.signalHistory.length - 2].number)
@@ -74,22 +61,16 @@ class SignalEngine {
     const prediction = prevPattern && currentPattern === prevPattern ? 'MATCH' : 'DIFFER';
     const confidence = (Math.random() * 30 + 70).toFixed(2);
     
-    return {
-      prediction,
-      confidence,
-      currentPattern
-    };
+    return { prediction, confidence, currentPattern };
   }
 
   getNumberPattern(num) {
-    // Analyze digit pattern
     const digits = String(num).padStart(4, '0').split('');
     const unique = new Set(digits).size;
     return unique <= 2 ? 'LOW_VARIANCE' : 'HIGH_VARIANCE';
   }
 
   getTimeRemaining() {
-    // Calculate seconds until next signal (countdown timer)
     const elapsedTicks = this.tickCount % this.ticksPerSignal;
     const ticksRemaining = this.ticksPerSignal - elapsedTicks;
     const secondsRemaining = Math.max(0, this.secondsPerSignal - (elapsedTicks * 6));

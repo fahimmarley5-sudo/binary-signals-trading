@@ -9,19 +9,16 @@ class TickDataProcessor extends EventEmitter {
   }
 
   start() {
-    // Simulate real tick data - replace with actual broker API
     this.tickInterval = setInterval(() => {
       const newTick = this.generateMockTick();
       this.tickBuffer.push(newTick);
       this.currentTick = newTick;
       
       this.emit('newTick', newTick);
-    }, 1000); // New tick every second
+    }, 1000);
   }
 
   generateMockTick() {
-    // Simulates real market tick data
-    // Replace this with actual broker API calls
     return {
       price: Math.floor(Math.random() * 10000),
       timestamp: Date.now(),
