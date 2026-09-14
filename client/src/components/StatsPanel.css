@@ -1,0 +1,84 @@
+.stats-panel {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stats-panel h2 {
+  color: #1f2937;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-top: 4px solid #3b82f6;
+}
+
+.stat-card h3 {
+  margin: 0 0 15px 0;
+  color: #1f2937;
+  font-size: 18px;
+}
+
+.stat-value {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+}
+
+.stat-value span {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.stat-value .wins {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.win-rate {
+  font-size: 32px;
+  font-weight: bold;
+  color: #3b82f6;
+  text-align: center;
+  padding: 15px;
+  background: #f0f9ff;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.stat-card.highlight {
+  border-top-color: #f59e0b;
+  background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+}
+
+.big-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #d97706;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.stat-card.highlight p {
+  text-align: center;
+  color: #b45309;
+  margin: 10px 0 0 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 18px;
+}
