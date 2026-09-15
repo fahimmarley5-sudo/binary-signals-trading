@@ -62,8 +62,8 @@ tickDataProcessor.on('newTick', (tickData) => {
     timeRemaining: signal.timeRemaining
   });
 });
-app.get('/', (req, res) => {
-    res.send("Trading Engine Live");};
+app.get('/', (req, res) => {  
+res.status(200).send("Trading Engine Live");}
 const PORT = process.env.PORT || 5000;
 server.listen(PORT,'0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
