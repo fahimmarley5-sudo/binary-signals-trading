@@ -33,7 +33,6 @@
             padding: 10px;
         }
 
-        /* Enforce exact mobile layout constraints even on desktops */
         .app-container {
             width: 100%;
             max-width: 430px;
@@ -46,7 +45,6 @@
             gap: 14px;
         }
 
-        /* Top Navigation Tabs */
         .tab-navigation {
             display: flex;
             background: #ebeef2;
@@ -74,7 +72,6 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        /* Form Inputs Section */
         .form-group {
             display: flex;
             flex-direction: column;
@@ -107,7 +104,6 @@
             outline: 2px solid #cbdbfa;
         }
 
-        /* Big Digit Display Block matching reference images */
         .digit-display-card {
             background-color: var(--card-dark);
             color: var(--text-light);
@@ -140,13 +136,6 @@
             border-radius: 20px;
         }
 
-        /* Action Buttons */
-        .action-grid {
-            display: grid;
-            grid-template-columns: 1xl 1fr;
-            gap: 10px;
-        }
-
         .btn {
             padding: 12px;
             border: none;
@@ -158,11 +147,8 @@
             text-align: center;
         }
 
-        .btn-green { background-color: var(--accent-green); }
-        .btn-red { background-color: var(--accent-red); }
         .btn-blue { background-color: var(--accent-blue); width: 100%; }
 
-        /* Martingale Grid Steps Matrix */
         .matrix-container {
             border-top: 1px solid var(--border-color);
             padding-top: 12px;
@@ -177,7 +163,7 @@
 
         .matrix-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
         }
 
@@ -203,7 +189,6 @@
             margin-top: 2px;
         }
 
-        /* Stream Status Indicator Bar */
         .status-bar {
             display: flex;
             align-items: center;
@@ -229,19 +214,16 @@
 <body>
 
 <div class="app-container">
-    <!-- View Switcher Tabs -->
     <div class="tab-navigation">
-        <button class="tab-btn active" onclick="switchView('martingale')">Martingale Grid</button>
-        <button class="tab-btn" onclick="switchView('compounding')">Compounding Sheet</button>
+        <button class="tab-btn active" onclick="switchView('martingale', event)">Martingale Grid</button>
+        <button class="tab-btn" onclick="switchView('compounding', event)">Compounding Sheet</button>
     </div>
 
-    <!-- Live Ticker Value Card Container -->
     <div class="digit-display-card">
         <div class="digit-main" id="live-digit">--</div>
         <div class="timer-sub" id="live-timer">Tick Duration: 0.0s</div>
     </div>
 
-    <!-- Dynamic Target Setup Inputs -->
     <div class="form-group">
         <label>Deriv API Token Access</label>
         <input type="password" id="api-token" placeholder="Paste your Deriv API Token here...">
@@ -273,18 +255,13 @@
         </div>
     </div>
 
-    <!-- Active Stream Controls -->
     <button class="btn btn-blue" onclick="connectToDeriv()">Connect Live Stream Data</button>
 
-    <!-- Matrix Output Grid Grid Display Structure -->
     <div class="matrix-container">
         <div class="matrix-title" id="matrix-header-title">Position Size Matrix Steps</div>
-        <div class="matrix-grid" id="matrix-output-body">
-            <!-- Dynamic data output targets populated via calculations -->
-        </div>
+        <div class="matrix-grid" id="matrix-output-body"></div>
     </div>
 
-    <!-- Footer Network Status Tracker -->
     <div class="status-bar">
         <span>Connection Engine: <strong id="connection-state">Offline</strong></span>
         <span class="status-dot" id="status-indicator-dot"></span>
@@ -297,11 +274,10 @@
     let lastTickTimestamp = Date.now();
     let trackingTimerInterval = null;
 
-    // Handle structural UI updates depending on selected strategy view modes
-    function switchView(selectedView) {
+    function switchView(selectedView, event) {
         currentActiveView = selectedView;
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        if (event && event.target) event.target.classList.add('active');
         
         const titleElement = document.getElementById('matrix-header-title');
         if (selectedView === 'compounding') {
@@ -312,7 +288,6 @@
         calculateMatrix();
     }
 
-    // Handles processing formulas for step arrays dynamically
     function calculateMatrix() {
         const baseStake = parseFloat(document.getElementById('base-stake').value) || 0;
         const multiplier = parseFloat(document.getElementById('martingale-multiplier').value) || 0;
@@ -321,6 +296,33 @@
         
         container.innerHTML = '';
 
-        for (let stepIndex = 0; stepIndex <= 5; stepIndex++) {
-            let directValueOutput = 0;
-            
+        let currentStake = baseStake;
+        for (let stepIndex = 1; stepIndex <= 6; stepIndex++) {
+            if (stepIndex > 1) {
+                if (currentActiveView === 'martingale') {
+                    currentStake = currentStake * multiplier;
+                } else {
+                    currentStake = currentStake * (1 + payoutRate);
+                }
+            }
+
+            const box = document.createElement('div');
+            box.className = 'matrix-step-box';
+            box.innerHTML = `
+                <div class="step-id">Step ${stepIndex}</div>
+                <div class="step-value">$${currentStake.toFixed(2)}</div>
+            `;
+            container.appendChild(box);
+        }
+    }
+
+    function startTickTimer() {
+        if (trackingTimerInterval) clearInterval(trackingTimerInterval);
+        lastTickTimestamp = Date.now();
+        trackingTimerInterval = setInterval(() => {
+            const duration = ((Date.now() - lastTickTimestamp) / 1000).toFixed(1);
+            document.getElementById('live-timer').innerText = `Tick Duration: ${duration}s`;
+        }, 100);
+    }
+
+    function connectToDeriv() {
