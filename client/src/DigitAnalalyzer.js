@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const DERIV_APP_ID = "1089"; // Testing App ID
-const DERIV_WS_URL = `wss://://derivws.com{DERIV_APP_ID}`;
+ const DERIV_WS_URL =  `wss://://derivws.com{DERIV_APP_ID}`;
 
 
 
