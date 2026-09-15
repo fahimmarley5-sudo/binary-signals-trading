@@ -225,8 +225,8 @@
     </div>
 
     <div class="form-group">
-        <label>Deriv API Token Access</label>
-        <input type="password" id="api-token" placeholder="Paste your Deriv API Token here...">
+        <label>Deriv API Token Access (Optional for Stream)</label>
+        <input type="password" id="api-token" placeholder="Paste your token if available...">
     </div>
 
     <div class="input-row">
@@ -246,7 +246,7 @@
 
     <div class="input-row">
         <div class="form-group" style="flex: 1;">
-            <label>Payout %</label>
+            -- <label>Payout %</label>
             <input type="number" id="payout-rate" value="95" oninput="calculateMatrix()">
         </div>
         <div class="form-group" style="flex: 1;">
@@ -325,4 +325,3 @@
         }, 100);
     }
 
-    function connectToDeriv() {
