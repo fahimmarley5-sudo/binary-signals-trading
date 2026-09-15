@@ -73,6 +73,6 @@ console.log(`Server running on port ${PORT}'
 
 setTimeout(()=>{
   tickDataProcessor.start();
-});3000);
+}, 3000);
 });
 module.exports = app;
