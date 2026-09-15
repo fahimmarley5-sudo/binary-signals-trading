@@ -1,75 +1,16 @@
-require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const http = require('http');
-const socketIo = require('socket.io');
 const path = require('path');
-const signalEngine = require('./engine/signalEngine');
-const tickDataProcessor = require('./engine/tickDataProcessor');
-
 const app = express();
-const server = http.createServer(app);
+const PORT = process.env.PORT || 3000;
 
-const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+// Tell the server to look for static files in the root folder
+app.use(express.static(__dirname));
 
-const io = socketIo(server, {
-  cors: {
-    origin: clientUrl,
-    methods: ["GET", "POST"]
-  }
+// Send your index.html file whenever someone opens your website URL
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Middleware
-app.use(cors({
-  origin: clientUrl,
-  credentials: true
-}));
-app.use(express.json());
-
-// API Routes
-app.use('/api/signals', require('./routes/signals'));
-app.use('/api/stats', require('./routes/stats'));
-app.use('/api/courses', require('./routes/courses'));
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build/index.html'));
-  });
-}
-
-// WebSocket Connection
-io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
+app.listen(PORT, () => {
+    console.log(`Server is running smoothly on port ${PORT}`);
 });
-
-// Real-time signal emission
-tickDataProcessor.on('newTick', (tickData) => {
-  const signal = signalEngine.generateSignal(tickData);
-  
-  io.emit('signal', {
-    timestamp: new Date(),
-    number: signal.number,
-    overUnder: signal.overUnder,
-    evenOdd: signal.evenOdd,
-    matchDiffer: signal.matchDiffer,
-    winRate: signal.winRate,
-    timeRemaining: signal.timeRemaining
-   });
- });
-
-
-const PORT = process.env.PORT || 5000;
-
-server.listen(PORT,'0.0.0.0', () => {
-  console.log("Live");
-
-  setTimeout(()=>{
-    tickDataProcessor.start();
-  }, 3000);
-});
-module.exports = app;
