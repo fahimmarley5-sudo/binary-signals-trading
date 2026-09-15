@@ -30,9 +30,6 @@ app.use(express.json());
 app.use('/api/signals', require('./routes/signals'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/courses', require('./routes/courses'));
-app.get('/',(req,res) => {
-  res.status(200).send("Trading Engine Live");
-});
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
