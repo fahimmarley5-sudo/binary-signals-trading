@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const DERIV_APP_ID = "1089"; // Testing App ID
 const DERIV_WS_URL = `wss://://derivws.com{DERIV_APP_ID}`;
 
+
 export default function DigitAnalyzer() {
   const [symbol, setSymbol] = useState("R_100"); // Default Volatility 100
   const [tradeType, setTradeType] = useState("matches"); // matches, even_odd, over_under
