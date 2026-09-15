@@ -100,10 +100,6 @@
             color: #222;
         }
 
-        input:focus {
-            outline: 2px solid #cbdbfa;
-        }
-
         .digit-display-card {
             background-color: var(--card-dark);
             color: var(--text-light);
@@ -226,7 +222,7 @@
 
     <div class="form-group">
         <label>Deriv API Token Access (Optional for Stream)</label>
-        <input type="password" id="api-token" placeholder="Paste your token if available...">
+        <input type="password" id="api-token" placeholder="Token optional for live charts...">
     </div>
 
     <div class="input-row">
@@ -324,4 +320,7 @@
             document.getElementById('live-timer').innerText = `Tick Duration: ${duration}s`;
         }, 100);
     }
+
+    function connectToDeriv() {
+        if (wsConnection) wsConnection.close();
 
