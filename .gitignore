@@ -1,7 +1,0 @@
-server.js
-engine/
-routes/
-client/
-node_modules/
-.env
-.DS_Store
