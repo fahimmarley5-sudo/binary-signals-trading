@@ -220,11 +220,6 @@
         <div class="timer-sub" id="live-timer">Tick Duration: 0.0s</div>
     </div>
 
-    <div class="form-group">
-        <label>Deriv API Token Access (Optional for Stream)</label>
-        <input type="password" id="api-token" placeholder="Token optional for live charts...">
-    </div>
-
     <div class="input-row">
         <div class="form-group" style="flex: 1;">
             <label>Market Index</label>
@@ -324,3 +319,6 @@
     function connectToDeriv() {
         if (wsConnection) wsConnection.close();
 
+        document.getElementById('connection-state').innerText = "Connecting...";
+        
+        // Connect to Amy's recommended open public stream URL endpoint
