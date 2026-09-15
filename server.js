@@ -67,9 +67,12 @@ tickDataProcessor.on('newTick', (tickData) => {
 
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT,'0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  tickDataProcessor.start();
-});
 
+server.listen(PORT,'0.0.0.0', () => {
+console.log(`Server running on port ${PORT}'
+
+setTimeout(()=>{
+  tickDataProcessor.start();
+});3000);
+});
 module.exports = app;
