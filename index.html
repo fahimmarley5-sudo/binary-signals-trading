@@ -1,1 +1,322 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Digits</title><style>body{background:#0e1118;color:#fff;font-family:sans-serif;text-align:center;padding:20px}input,select,button{width:90%;padding:12px;margin:8px 0;background:#222b3c;border:1px solid #334155;color:#fff;border-radius:8px}button{background:#007aff;font-weight:bold;border:none}#digit{font-size:5rem;font-weight:bold;color:#ff9f0a}#clock{font-size:2.5rem;color:#ff3b30}</style></head><body><div style="background:#161c28;max-width:400px;margin:auto;padding:20px;border-radius:12px"><h2>Digit Tracker</h2><input id="appId" placeholder="Deriv App ID"><select id="market"><option value="R_100">Vol 100</option><option value="R_10">Vol 10</option><option value="R_25">Vol 25</option><option value="R_50">Vol 50</option><option value="R_75">Vol 75</option></select><button onclick="connect()">Connect</button><div id="status" style="color:#ff3b30;margin:10px">🔴 Disconnected</div><div id="digit">--</div><div id="clock">0.00s</div></div><script>let ws=null,ping=null,anim=null,lt=0;function connect(){const id=document.getElementById('appId').value.trim(),mkt=document.getElementById('market').value;if(!id)return alert("Need ID");if(ws){clearInterval(ping);cancelAnimationFrame(anim);ws.close()}document.getElementById('status').innerText="⏳ Connecting...";ws=new WebSocket(`wss://://derivws.com{id}`);ws.onopen=()=>{document.getElementById('status').innerText="🍏 Connected";document.getElementById('status').style.color="#4cd964";ws.send(JSON.stringify({ticks:mkt,subscribe:1}));ping=setInterval(()=>ws.send(JSON.stringify({ping:1})),15000)};ws.onmessage=(msg)=>{const res=JSON.parse(msg.data);if(res.msg_type==='tick'&&res.tick){document.getElementById('digit').innerText=res.tick.quote.toString().slice(-1);lt=performance.now();if(anim)cancelAnimationFrame(anim);function run(){document.getElementById('clock').innerText=((performance.now()-lt)/1000).toFixed(2)+"s";anim=requestAnimationFrame(run)}anim=requestAnimationFrame(run)}};ws.onclose=()=>{document.getElementById('status').innerText="🔴 Disconnected";document.getElementById('status').style.color="#ff3b30";clearInterval(ping);cancelAnimationFrame(anim)}}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Digit Tracker</title>
+    <style>
+        body {
+            background-color: #111827;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .container {
+            background-color: #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.35rem;
+            margin-top: 0;
+            margin-bottom: 4px;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        input, select {
+            width: 100%;
+            background-color: #111827;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            padding: 12px;
+            color: white;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+        .btn-connect {
+            width: 100%;
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+            font-size: 0.85rem;
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            background-color: #374151;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+        .tab.active {
+            background-color: #1d4ed8;
+            color: white;
+            font-weight: 600;
+        }
+        .display-panel {
+            background-color: #111827;
+            border-radius: 8px;
+            padding: 32px 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .panel-label {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+        .digits-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .digit-dash {
+            width: 32px;
+            height: 8px;
+            background-color: #f59e0b;
+            border-radius: 4px;
+        }
+        .panel-footer-text {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0 4px;
+            margin-bottom: 24px;
+        }
+        .timer-section {
+            text-align: center;
+        }
+        .timer-label {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+        .timer-digits {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #ef4444;
+            font-family: monospace;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Market Digit Tracker</h2>
+    <div class="subtitle">Match live data with your Deriv Bot</div>
+    
+    <div class="form-group">
+        <input type="text" id="token-input" value="34pyYqDoydtmYmaa5UxSH" placeholder="Enter Deriv API Token">
+    </div>
+    
+    <div class="form-group">
+        <select id="market-selector">
+            <option value="R_10">Volatility 10 Index</option>
+            <option value="R_25">Volatility 25 Index</option>
+            <option value="R_50">Volatility 50 Index</option>
+            <option value="R_75">Volatility 75 Index</option>
+            <option value="R_100">Volatility 100 Index</option>
+            <option value="1HZ10V">Volatility 10 (1s) Index</option>
+            <option value="1HZ25V">Volatility 25 (1s) Index</option>
+            <option value="1HZ50V">Volatility 50 (1s) Index</option>
+            <option value="1HZ75V">Volatility 75 (1s) Index</option>
+            <option value="1HZ100V">Volatility 100 (1s) Index</option>
+        </select>
+    </div>
+    
+    <button class="btn-connect" id="connect-btn">Connect Stream</button>
+    
+    <div class="status-container" id="status-area">
+        <span class="status-dot" id="status-indicator"></span><span id="status-text">Disconnected</span>
+    </div>
+    
+    <div class="tab-container">
+        <div class="tab active" onclick="setStrategy('Matches/Differs')">Matches/Differs</div>
+        <div class="tab" onclick="setStrategy('Even/Odd')">Even/Odd</div>
+        <div class="tab" onclick="setStrategy('Over/Under')">Over/Under</div>
+    </div>
+    
+    <div class="display-panel">
+        <div class="panel-label">CURRENT SPOT DIGIT</div>
+        <div class="digits-row" id="digits-container">
+            <div class="digit-dash"></div>
+            <div class="digit-dash"></div>
+        </div>
+        <div class="panel-footer-text" id="price-display">Price: --</div>
+    </div>
+    
+    <div class="stats-grid">
+        <div id="strategy-type">Type: --</div>
+        <div id="strategy-extra">O/U: --</div>
+    </div>
+    
+    <div class="timer-section">
+        <div class="timer-label">ELAPSED INTERVAL TIME</div>
+        <div class="timer-digits" id="timer-display">0.00s</div>
+    </div>
+</div>
+
+<script>
+const DERIV_WS_URL = "wss://://derivws.com"; 
+let ws = null;
+let activeSubscriptionId = null;
+let timerInterval = null;
+let startTime = 0;
+
+document.getElementById('connect-btn').addEventListener('click', () => {
+    const token = document.getElementById('token-input').value.trim();
+    const symbol = document.getElementById('market-selector').value;
+    
+    if (!token) {
+        alert("Please enter a valid Deriv Token ID!");
+        return;
+    }
+    
+    startDerivWebSocket(token, symbol);
+});
+
+function startDerivWebSocket(apiToken, selectedSymbol) {
+    if (ws) ws.close();
+    
+    ws = new WebSocket(DERIV_WS_URL);
+    setUiStatus("Connecting...", "#f59e0b");
+
+    ws.onopen = () => {
+        ws.send(JSON.stringify({ authorize: apiToken }));
+    };
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.msg_type === "authorize" && !data.error) {
+            setUiStatus("Connected", "#10b981");
+            startTimer();
+            
+            ws.send(JSON.stringify({
+                ticks: selectedSymbol,
+                subscribe: 1
+            }));
+        }
+
+        if (data.msg_type === "tick" && data.tick) {
+            activeSubscriptionId = data.tick.id;
+            const price = data.tick.quote;
+            const priceStr = price.toFixed(data.tick.pip_size || 2);
+            const lastDigit = priceStr.slice(-1);
+            
+            document.getElementById('price-display').innerText = `Price: ${priceStr}`;
+            
+            // Render modern last digit visuals dynamically
+            document.getElementById('digits-container').innerHTML = `
+                <div style="font-size: 2.5rem; font-weight: 700; color: #f59e0b; margin-top: -10px;">${lastDigit}</div>
+            `;
+        }
+
+        if (data.error) {
+            setUiStatus("Disconnected", "#ef4444");
+            stopTimer();
+        }
+    };
+
+    ws.onclose = () => {
+        setUiStatus("Disconnected", "#ef4444");
+        stopTimer();
+    };
+}
+
+document.getElementById('market-selector').addEventListener('change', function() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        if (activeSubscriptionId) {
+            ws.send(JSON.stringify({ forget: activeSubscriptionId }));
+        }
+        document.getElementById('price-display').innerText = "Changing index...";
+        ws.send(JSON.stringify({
+            ticks: this.value,
+            subscribe: 1
+        }));
+    }
+});
+
+function setUiStatus(text, color) {
+    document.getElementById('status-text').innerText = text;
+    document.getElementById('status-indicator').style.backgroundColor = color;
+    document.getElementById('status-area').style.color = color;
+}
+
+function setStrategy(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('strategy-type').innerText = `Type: ${name}`;
+}
+
+function startTimer() {
+    startTime = Date.now();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
