@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digit Tracker</title>
+    <style>
+        body { background: #0e1118; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+        .box { background: #161c28; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 12px; }
+        input, select, button { width: 90%; padding: 12px; margin: 8px 0; background: #222b3c; border: 1px solid #334155; color: #fff; border-radius: 8px; font-size: 1rem; }
+        button { background: #007aff; font-weight: bold; border: none; cursor: pointer; }
+        .digit { font-size: 5rem; font-weight: bold; margin: 15px 0; font-family: monospace; color: #ff9f0a; }
+        .stats { display: flex; justify-content: space-around; margin: 20px 0; font-weight: bold; }
+        .timer { font-family: monospace; font-size: 2.5rem; color: #ff3b30; margin-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Market Digit Tracker</h2>
+    <input type="text" id="appId" placeholder="Enter Deriv App ID">
+    <select id="market">
+        <option value="R_100">Volatility 100 Index</option>
+        <option value="R_10">Volatility 10 Index</option>
+        <option value="R_25">Volatility 25 Index</option>
+        <option value="R_50">Volatility 50 Index</option>
+        <option value="R_75">Volatility 75 Index</option>
+    </select>
+    <button onclick="connect()">Activate Live Stream</button>
+    <div id="status" style="color: #ff3b30; margin: 10px 0;">🔴 Disconnected</div>
+    <div class="digit" id="digit">--</div>
+    <div id="price" style="color: #8a8d93;">Price: --</div>
+    <div class="stats">
+        <div id="eo">Type: --</div>
+        <div id="uo">O/U: --</div>
+    </div>
+    <div style="border-top: 1px solid #334155; padding-top: 15px;">
+        <div style="font-size: 0.8rem; color: #8a8d93; text-transform: uppercase;">Elapsed Interval Time</div>
+        <div class="timer" id="clock">0.00s</div>
+    </div>
+</div>
+<script>
+    let ws = null, ping = null, anim = null, lastTime = 0;
+    function connect() {
+        const id = document.getElementById('appId').value.trim();
+        const mkt = document.getElementById('market').value;
+        if(!id) return alert("Please input your App ID");
+        if(ws) { clearInterval(ping); cancelAnimationFrame(anim); ws.close(); }
+        document.getElementById('status').innerText = "⏳ Connecting...";
+        
+        // THIS LINE IS NOW FULLY FIXED FOR YOU BELOW:
+        ws = new WebSocket(`wss://://derivws.com{id}`);
+        
+        ws.onopen = () => {
+            document.getElementById('status').innerText = "🍏 Connected Live";
+            document.getElementById('status').style.color = "#4cd964";
+            ws.send(JSON.stringify({"ticks": mkt, "subscribe": 1}));
+            ping = setInterval(() => ws.send(JSON.stringify({"ping": 1})), 15000);
+        };
+        ws.onmessage = (msg) => {
+            const res = JSON.parse(msg.data);
+            if(res.msg_type === 'tick' && res.tick) {
+                const p = res.tick.quote.toString();
+                const d = parseInt(p.slice(-1));
+                document.getElementById('digit').innerText = d;
+                document.getElementById('price').innerText = "Price: " + p;
+                document.getElementById('eo').innerText = (d % 2 === 0) ? "EVEN" : "ODD";
+                document.getElementById('uo').innerText = (d > 5) ? "OVER 5" : (d < 5) ? "UNDER 5" : "EQUAL 5";
+                lastTime = performance.now();
+                if(anim) cancelAnimationFrame(anim);
+                function run() {
+                    document.getElementById('clock').innerText = ((performance.now() - lastTime) / 1000).toFixed(2) + "s";
+                    anim = requestAnimationFrame(run);
+                }
+                anim = requestAnimationFrame(run);
+            }
+        };
+        ws.onclose = () => {
+            document.getElementById('status').innerText = "🔴 Disconnected";
+            document.getElementById('status').style.color = "#ff3b30";
+            clearInterval(ping); cancelAnimationFrame(anim);
+        };
+    }
+</script>
+</body>
+</html>
