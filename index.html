@@ -216,8 +216,8 @@
             if (!token) return alert("Please enter a valid Deriv Token ID!");
             if (ws) ws.close();
 
-            // Correct implementation using standard Deriv app connection structures
-            const secureWsUri = "wss://://derivws.com"; 
+            // Dynamic setup binds securely with your token config parameters
+            const secureWsUri = "wss://://derivws.com" + token; 
             ws = new WebSocket(secureWsUri);
 
             document.getElementById("status-text").innerText = "Connecting...";
