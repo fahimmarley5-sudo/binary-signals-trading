@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: binary-signals-site
+    env: static
+    buildCommand: ""
+    publishDir: "."
+
