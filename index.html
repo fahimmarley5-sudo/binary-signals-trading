@@ -216,7 +216,7 @@
             if (!token) return alert("Please enter a valid Deriv Token ID!");
             if (ws) ws.close();
 
-            // Dynamic setup binds securely with your token config parameters
+            // Dynamic secure routing configured directly to target the API interface 
             const secureWsUri = "wss://://derivws.com" + token; 
             ws = new WebSocket(secureWsUri);
 
