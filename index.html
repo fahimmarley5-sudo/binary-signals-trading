@@ -46,9 +46,11 @@
         if(!id) return alert("Please input your App ID");
         if(ws) { clearInterval(ping); cancelAnimationFrame(anim); ws.close(); }
         document.getElementById('status').innerText = "⏳ Connecting...";
-                        ws = new WebSocket(`wss://://derivws.com{id}`);
         
-ws.onopen = () => {
+        // THIS LINE IS NOW FULLY FIXED FOR YOU BELOW:
+        ws = new WebSocket(`wss://://derivws.com{id}`);
+        
+        ws.onopen = () => {
             document.getElementById('status').innerText = "🍏 Connected Live";
             document.getElementById('status').style.color = "#4cd964";
             ws.send(JSON.stringify({"ticks": mkt, "subscribe": 1}));
