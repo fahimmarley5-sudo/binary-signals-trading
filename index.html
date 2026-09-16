@@ -160,7 +160,8 @@
         <h2>Market Digit Tracker</h2>
         <div class="subtitle">Match live data with your Deriv Bot</div>
         <div class="form-group">
-            <input type="text" id="token-input" value="34pyYqDoydtmYmaa5UxSH">
+            <!-- FIXED: The default value placeholder string has been completely removed -->
+            <input type="text" id="token-input" value="" placeholder="Paste your Deriv Token here">
         </div>
         <div class="form-group">
             <select id="market-selector">
@@ -216,7 +217,6 @@
             if (!token) return alert("Please enter a valid Deriv Token ID!");
             if (ws) ws.close();
 
-            // Dynamic secure routing configured directly to target the API interface 
             const secureWsUri = "wss://://derivws.com" + token; 
             ws = new WebSocket(secureWsUri);
 
