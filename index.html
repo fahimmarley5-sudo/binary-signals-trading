@@ -3,306 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deriv Live Digit Tracker</title>
+    <title>Digit Tracker</title>
     <style>
-        :root {
-            --bg-color: #0e1118;
-            --card-bg: #161c28;
-            --accent-blue: #007aff;
-            --accent-green: #4cd964;
-            --accent-red: #ff3b30;
-            --text-main: #ffffff;
-            --text-muted: #8a8d93;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            box-sizing: border-box;
-        }
-
-        h2 {
-            margin: 0 0 4px 0;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            text-align: center;
-            font-size: 0.9rem;
-            margin-bottom: 24px;
-        }
-
-        .setup-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        input, select, button {
-            background: #222b3c;
-            border: 1px solid #334155;
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        input { flex: 2; }
-        select { flex: 1; }
-
-        button {
-            width: 100%;
-            background: var(--accent-blue);
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            margin-bottom: 20px;
-        }
-
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #475569; cursor: not-allowed; }
-
-        .connection-status {
-            text-align: center;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-        .status-disconnected { color: var(--accent-red); }
-        .status-connected { color: var(--accent-green); }
-
-        .display-box {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .digit-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .live-digit {
-            font-size: 4.5rem;
-            font-weight: 800;
-            margin: 10px 0;
-            font-family: monospace;
-            color: var(--text-main);
-        }
-
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .analysis-card {
-            background: #222b3c;
-            border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .analysis-title {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .analysis-value {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-
-        /* Lower section Timer Styling */
-        .timer-section {
-            border-top: 1px solid #334155;
-            padding-top: 20px;
-            text-align: center;
-        }
-
-        .timer-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .elapsed-clock {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #ff9f0a; /* Warning Amber color for tracking speed */
-        }
+        body { background: #0e1118; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+        .box { background: #161c28; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 12px; }
+        input, select, button { width: 90%; padding: 12px; margin: 8px 0; background: #222b3c; border: 1px solid #334155; color: #fff; border-radius: 8px; font-size: 1rem; }
+        button { background: #007aff; font-weight: bold; border: none; cursor: pointer; }
+        .digit { font-size: 5rem; font-weight: bold; margin: 15px 0; font-family: monospace; color: #ff9f0a; }
+        .stats { display: flex; justify-content: space-around; margin: 20px 0; font-weight: bold; }
+        .timer { font-family: monospace; font-size: 2.5rem; color: #ff3b30; margin-top: 15px; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h2>Market Digit Analyzer</h2>
-    <div class="subtitle">Match live data seamlessly with your Deriv Bot</div>
-
-    <!-- Configuration Settings Setup -->
-    <div class="setup-group">
-        <input type="text" id="appIdInput" placeholder="Enter Deriv App ID (e.g. 1011)" value="">
-        <select id="marketSelect">
-            <option value="1Hz">Vol 10 (1s)</option>
-            <option value="R_10">Vol 10</option>
-            <option value="R_25">Vol 25</option>
-            <option value="R_50">Vol 50</option>
-            <option value="R_75">Vol 75</option>
-            <option value="R_100" selected>Vol 100</option>
-        </select>
+<div class="box">
+    <h2>Market Digit Tracker</h2>
+    <input type="text" id="appId" placeholder="Enter Deriv App ID">
+    <select id="market">
+        <option value="R_100">Volatility 100 Index</option>
+        <option value="R_10">Volatility 10 Index</option>
+        <option value="R_25">Volatility 25 Index</option>
+        <option value="R_50">Volatility 50 Index</option>
+        <option value="R_75">Volatility 75 Index</option>
+    </select>
+    <button onclick="connect()">Activate Live Stream</button>
+    <div id="status" style="color: #ff3b30; margin: 10px 0;">🔴 Disconnected</div>
+    <div class="digit" id="digit">--</div>
+    <div id="price" style="color: #8a8d93;">Price: --</div>
+    <div class="stats">
+        <div id="eo">Type: --</div>
+        <div id="uo">O/U: --</div>
     </div>
-    <button id="connectBtn" onclick="initiateDerivConnection()">Activate Live Stream</button>
-
-    <div id="statusIndicator" class="connection-status status-disconnected">🔴 System Inactive</div>
-
-    <!-- Active Analytics UI Screen Blocks -->
-    <div class="display-box">
-        <div class="digit-label">Current Spot Digit</div>
-        <div id="digitDisplay" class="live-digit">--</div>
-        <div id="priceDisplay" style="color: var(--text-muted); font-size: 0.9rem;">Price: --</div>
-    </div>
-
-    <!-- Analysis Logic Displays mapped to standard bot contracts -->
-    <div class="analysis-grid">
-        <div class="analysis-card">
-            <div class="analysis-title">Even / Odd</div>
-            <div id="evenOddVal" class="analysis-value">--</div>
-        </div>
-        <div class="analysis-card">
-            <div class="analysis-title">Over / Under (5)</div>
-            <div id="overUnderVal" class="analysis-value">--</div>
-        </div>
-    </div>
-
-    <!-- The Lower Execution Interval Clock requested -->
-    <div class="timer-section">
-        <div class="timer-label">Exact Elapsed Time Before Digit Changes</div>
-        <div id="elapsedClock" class="elapsed-clock">0.00s</div>
+    <div style="border-top: 1px solid #334155; padding-top: 15px;">
+        <div style="font-size: 0.8rem; color: #8a8d93; text-transform: uppercase;">Elapsed Interval Time</div>
+        <div class="timer" id="clock">0.00s</div>
     </div>
 </div>
-
 <script>
-    let socket = null;
-    let pingIntervalId = null;
-    let timerAnimationId = null;
-    let lastTickTimeStamp = 0;
-
-    function initiateDerivConnection() {
-        const appId = document.getElementById('appIdInput').value.trim();
-        const selectedMarket = document.getElementById('marketSelect').value;
-        const statusIndicator = document.getElementById('statusIndicator');
-        const connectBtn = document.getElementById('connectBtn');
-
-        if (!appId) {
-            alert("Please enter a valid Deriv App ID. You can register/get one instantly from ://deriv.com");
-            return;
-        }
-
-        // Close existing connections if resetting
-        if (socket) {
-            clearInterval(pingIntervalId);
-            if (timerAnimationId) cancelAnimationFrame(timerAnimationId);
-            socket.close();
-        }
-
-        statusIndicator.innerText = "⏳ Connecting to Gateway...";
-        statusIndicator.className = "connection-status";
-        connectBtn.disabled = true;
-
-        // Establish live connection using target application parameter
-        socket = new WebSocket(`wss://://derivws.com{appId}`);
-
-        socket.onopen = function() {
-            statusIndicator.innerText = "🍏 Connected & Subscribed Live";
-            statusIndicator.className = "connection-status status-connected";
-            connectBtn.disabled = false;
-            connectBtn.innerText = "Update Subscription";
-
-            // 1. Send immediate subscription payload
-            socket.send(JSON.stringify({
-                "ticks": selectedMarket,
-                "subscribe": 1
-            }));
-
-            // 2. Start Keep-Alive Protocol (Every 15s) to block automatic timeouts
-            pingIntervalId = setInterval(() => {
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify({ "ping": 1 }));
-                }
-            }, 15000);
+    let ws = null, ping = null, anim = null, lastTime = 0;
+    function connect() {
+        const id = document.getElementById('appId').value.trim();
+        const mkt = document.getElementById('market').value;
+        if(!id) return alert("Please input your App ID");
+        if(ws) { clearInterval(ping); cancelAnimationFrame(anim); ws.close(); }
+        document.getElementById('status').innerText = "⏳ Connecting...";
+        ws = new WebSocket(`wss://://derivws.com{id}`);
+        ws.onopen = () => {
+            document.getElementById('status').innerText = "🍏 Connected Live";
+            document.getElementById('status').style.color = "#4cd964";
+            ws.send(JSON.stringify({"ticks": mkt, "subscribe": 1}));
+            ping = setInterval(() => ws.send(JSON.stringify({"ping": 1})), 15000);
         };
-
-        socket.onmessage = function(msg) {
-            const responseData = JSON.parse(msg.data);
-
-            if (responseData.msg_type === 'tick' && responseData.tick) {
-                const rawPrice = responseData.tick.quote.toString();
-                const lastDigit = parseInt(rawPrice.slice(-1));
-
-                // Instantly update numerical structural stats
-                document.getElementById('digitDisplay').innerText = lastDigit;
-                document.getElementById('priceDisplay').innerText = `Price: ${rawPrice}`;
-
-                // Process bot configurations data blocks
-                runStructuralAnalysis(lastDigit);
-
-                // Run high-precision millisecond timing refresh loop
-                triggerStopwatchLoop();
+        ws.onmessage = (msg) => {
+            const res = JSON.parse(msg.data);
+            if(res.msg_type === 'tick' && res.tick) {
+                const p = res.tick.quote.toString();
+                const d = parseInt(p.slice(-1));
+                document.getElementById('digit').innerText = d;
+                document.getElementById('price').innerText = "Price: " + p;
+                document.getElementById('eo').innerText = (d % 2 === 0) ? "EVEN" : "ODD";
+                document.getElementById('uo').innerText = (d > 5) ? "OVER 5" : (d < 5) ? "UNDER 5" : "EQUAL 5";
+                lastTime = performance.now();
+                if(anim) cancelAnimationFrame(anim);
+                function run() {
+                    document.getElementById('clock').innerText = ((performance.now() - lastTime) / 1000).toFixed(2) + "s";
+                    anim = requestAnimationFrame(run);
+                }
+                anim = requestAnimationFrame(run);
             }
         };
-
-        socket.onclose = function() {
-            statusIndicator.innerText = "🔴 System Inactive (Disconnected)";
-            statusIndicator.className = "connection-status status-disconnected";
-            connectBtn.disabled = false;
-            connectBtn.innerText = "Activate Live Stream";
-            clearInterval(pingIntervalId);
-            if (timerAnimationId) cancelAnimationFrame(timerAnimationId);
-        };
-
-        socket.onerror = function(err) {
-            console.error("WebSocket Connection Flagged Error: ", err);
-            statusIndicator.innerText = "🔴 Server Connection Error";
-            statusIndicator.className = "connection-status status-disconnected";
+        ws.onclose = () => {
+            document.getElementById('status').innerText = "🔴 Disconnected";
+            document.getElementById('status').style.color = "#ff3b30";
+            clearInterval(ping); cancelAnimationFrame(anim);
         };
     }
-
-    // High precision calculation tracking interval delays down to fractions of milliseconds
-    function triggerStopwatchLoop() {
-        lastTickTimeStamp = performance.now();
-        
-        if (timerAnimationId) {
-            cancelAnimationFrame(timerAnimationId);
-        }
-
-        function renderFrame() {
-
+</script>
+</body>
+</html>
