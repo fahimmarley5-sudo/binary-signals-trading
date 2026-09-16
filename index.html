@@ -320,3 +320,6 @@ function startTimer() {
     timerInterval = setInterval(() => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         document.getElementById('timer-display').innerText = `${elapsed}s`;
+    }, 10);
+}
+
