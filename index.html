@@ -272,7 +272,6 @@ function startDerivWebSocket(apiToken, selectedSymbol) {
             
             document.getElementById('price-display').innerText = `Price: ${priceStr}`;
             
-            // Render modern last digit visuals dynamically
             document.getElementById('digits-container').innerHTML = `
                 <div style="font-size: 2.5rem; font-weight: 700; color: #f59e0b; margin-top: -10px;">${lastDigit}</div>
             `;
@@ -320,3 +319,4 @@ function startTimer() {
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        document.getElementById('timer-display').innerText = `${elapsed}s`;
